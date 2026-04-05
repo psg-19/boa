@@ -208,15 +208,15 @@ impl JsResponse {
         // 6. If body is non-null, then:
         //    6.1. If response's status is a null body status, then throw a TypeError.
         //    6.2. Set response's body to body's body.
-        let body_bytes = if !body.is_null_or_undefined() {
+        let body_bytes = if body.is_null_or_undefined() {
+            Vec::new()
+        } else {
             if matches!(status_code, 101 | 103 | 204 | 205 | 304) {
                 return Err(JsNativeError::typ()
                     .with_message("Response with null body status cannot have a body")
                     .into());
             }
             body.to_string(context)?.to_std_string_lossy().into_bytes()
-        } else {
-            Vec::new()
         };
 
         Ok(Self {
